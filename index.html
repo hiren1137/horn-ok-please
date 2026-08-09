@@ -126,9 +126,9 @@
 <header>
   <div class="online"><span class="dot"></span><span id="clock"></span></div>
   <nav class="links">
-    <!-- STEP 3: make public playlists and paste links here -->
-    <a href="#" target="_blank" rel="noopener">Spotify</a>
-    <a href="#" target="_blank" rel="noopener">YT Music</a>
+    <!-- Spotify: uncomment and paste your playlist link when ready
+    <a href="https://open.spotify.com/playlist/YOUR_ID" target="_blank" rel="noopener">Spotify</a> -->
+    <a href="https://music.youtube.com/playlist?list=PLYlo8vpxz3qI" target="_blank" rel="noopener">YT Music</a>
   </nav>
 </header>
 
@@ -190,6 +190,12 @@ function onYouTubeIframeAPIReady(){
     },
     events:{
       onReady: ()=>{ ready = true; },
+      onError: e => {
+        // 101/150 = video owner blocked embedding; 100 = deleted/private
+        document.getElementById('song').textContent = 'Song blocked by label, skipping…';
+        document.getElementById('artist').textContent = '';
+        setTimeout(()=> player.nextVideo(), 1200);
+      },
       onStateChange: e => {
         const playing = e.data === YT.PlayerState.PLAYING;
         document.body.classList.toggle('playing', playing);
