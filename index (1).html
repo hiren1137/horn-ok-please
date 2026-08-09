@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>हॉर्न ओके प्लीज़ — Highway bangers from Indian trucks</title>
+<meta name="description" content="Songs that play in Indian trucks on the highway. Dhaba stops, night driving, Horn OK Please.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Mukta:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --kesari:#F2790F;      /* painted orange */
+    --truckgreen:#1E7A46;  /* body green */
+    --cream:#FFF3DC;       /* painted cream */
+    --night:#14213D;       /* night highway sky */
+    --signal:#D62828;      /* tail-light red */
+    --marigold:#FFC300;    /* indicator amber */
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:'Mukta',sans-serif;
+    color:var(--cream);
+    background:url('bg.jpg') center/cover no-repeat #14213D;
+    overflow:hidden;
+    position:relative;
+  }
+  /* subtle dark gradient so text stays readable, same trick as saloon.wtf */
+  body::before{
+    content:'';position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(to bottom, rgba(0,0,0,.25), transparent 35%, rgba(0,0,0,.45));
+  }
+
+  header{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:20px 28px;z-index:5}
+  .online{display:flex;align-items:center;gap:8px;font-size:15px;opacity:.9}
+  .dot{width:9px;height:9px;border-radius:50%;background:#3ddc84;box-shadow:0 0 8px #3ddc84}
+  .links a{color:var(--cream);text-decoration:none;margin-left:18px;font-weight:500;font-size:15px;border-bottom:1px dashed rgba(255,243,220,.4);padding-bottom:1px}
+  .links a:hover{color:var(--marigold)}
+
+  .title{position:absolute;top:16%;left:0;right:0;text-align:center;z-index:4;padding:0 16px}
+  .title h1{
+    font-family:'Yatra One',cursive;
+    font-size:clamp(52px,10vw,130px);
+    line-height:1.05;
+    color:var(--cream);
+    text-shadow:4px 4px 0 var(--signal), 8px 8px 0 rgba(0,0,0,.35);
+  }
+  .title p{margin-top:14px;font-size:clamp(15px,2vw,19px);color:var(--marigold);letter-spacing:.04em}
+
+  /* ---- PLAYER: styled like the back panel of a truck ---- */
+  .truck-panel{
+    position:absolute;left:50%;bottom:6%;transform:translateX(-50%);
+    width:min(560px,92vw);z-index:6;
+    background:linear-gradient(#20894f,var(--truckgreen));
+    border:6px solid var(--kesari);
+    border-radius:14px;
+    box-shadow:0 18px 40px rgba(0,0,0,.55), inset 0 0 0 3px rgba(255,243,220,.25);
+    padding:16px 18px 12px;
+  }
+  .hop{
+    font-family:'Yatra One',cursive;text-align:center;
+    color:var(--cream);font-size:clamp(20px,4vw,30px);letter-spacing:.12em;
+    text-shadow:2px 2px 0 rgba(0,0,0,.4);margin-bottom:10px;
+  }
+  .hop span{color:var(--marigold)}
+  .row{display:flex;align-items:center;gap:14px}
+  .coverwrap{position:relative;width:64px;height:64px;flex-shrink:0}
+  .cover{
+    width:100%;height:100%;border-radius:50%;
+    background:#0d3b23 center/cover no-repeat;
+    border:2px solid var(--cream);
+    animation:spin 8s linear infinite;
+    animation-play-state:paused;
+  }
+  .playing .cover{animation-play-state:running}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .hole{
+    position:absolute;left:50%;top:50%;
+    width:12px;height:12px;transform:translate(-50%,-50%);
+    border-radius:50%;background:rgba(0,0,0,.75);
+    border:2px solid rgba(255,243,220,.5);
+    pointer-events:none;
+  }
+  .meta{flex:1;min-width:0}
+  .song{font-weight:700;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .artist{font-size:14px;opacity:.85}
+  .controls{display:flex;align-items:center;gap:10px}
+  button{
+    background:var(--cream);border:none;border-radius:50%;
+    width:42px;height:42px;display:grid;place-items:center;
+    cursor:pointer;color:#1a1a1a;font-size:16px;
+    box-shadow:0 3px 0 rgba(0,0,0,.4);
+  }
+  button:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+  button.play{width:54px;height:54px;background:var(--marigold);font-size:20px}
+  button:focus-visible{outline:3px solid var(--marigold);outline-offset:2px}
+  .bar{margin-top:12px;display:flex;align-items:center;gap:10px;font-size:13px}
+  .track{flex:1;height:8px;border-radius:6px;background:rgba(0,0,0,.35);cursor:pointer;position:relative}
+  .fill{position:absolute;left:0;top:0;bottom:0;width:0%;border-radius:6px;background:var(--marigold)}
+
+  /* blinking indicators, on only while playing */
+  .ind{position:absolute;bottom:10px;width:18px;height:12px;border-radius:3px;background:#6b4a00;border:2px solid rgba(0,0,0,.35)}
+  .ind.l{left:-30px}.ind.r{right:-30px}
+  .playing .ind{background:var(--marigold);animation:blink 1s steps(1) infinite;box-shadow:0 0 12px var(--marigold)}
+  @keyframes blink{50%{background:#6b4a00;box-shadow:none}}
+
+  /* mudflaps */
+  .flap{position:absolute;bottom:-34px;width:70px;height:34px;background:#111;border-radius:0 0 8px 8px;
+    display:grid;place-items:center;color:var(--cream);font-family:'Yatra One',cursive;font-size:11px}
+  .flap.l{left:24px}.flap.r{right:24px}
+
+  #yt{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px}
+
+  @media (prefers-reduced-motion:reduce){
+    .ind,.cover{animation:none !important}
+  }
+  @media (max-width:520px){
+    .flap,.ind{display:none}
+    header{padding:14px 16px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="online"><span class="dot"></span><span id="clock"></span></div>
+  <nav class="links">
+    <!-- STEP 3: make public playlists and paste links here -->
+    <a href="#" target="_blank" rel="noopener">Spotify</a>
+    <a href="#" target="_blank" rel="noopener">YT Music</a>
+  </nav>
+</header>
+
+<div class="title">
+  <h1>हॉर्न ओके<br>प्लीज़</h1>
+  <p>Songs that play in Indian trucks. Night highway. Dhaba chai. Full volume.</p>
+</div>
+
+<div class="truck-panel" id="panel">
+  <div class="ind l"></div><div class="ind r"></div>
+  <div class="hop">HORN <span>OK</span> PLEASE</div>
+  <div class="row">
+    <div class="coverwrap"><div class="cover" id="cover"></div><div class="hole"></div></div>
+    <div class="meta">
+      <div class="song" id="song">Press play, driver saab</div>
+      <div class="artist" id="artist">—</div>
+    </div>
+    <div class="controls">
+      <button id="prev" aria-label="Previous song">⏮</button>
+      <button id="play" class="play" aria-label="Play or pause">▶</button>
+      <button id="next" aria-label="Next song">⏭</button>
+    </div>
+  </div>
+  <div class="bar">
+    <span id="cur">0:00</span>
+    <div class="track" id="track"><div class="fill" id="fill"></div></div>
+    <span id="dur">0:00</span>
+  </div>
+  <div class="flap l">बुरी नज़र</div>
+  <div class="flap r">वाले तेरा<br>मुँह काला</div>
+</div>
+
+<div id="yt"></div>
+
+<script>
+/* ================= STEP 1: YOUR PLAYLIST =================
+   Open your YouTube playlist. The URL looks like:
+   https://www.youtube.com/watch?v=xxxx&list=PLYlo8vpxz3qI................
+   Copy the FULL value after list= (the whole long ID)
+   and paste it below. The playlist must be Public or Unlisted.
+   Song names, artists, and cover art load automatically. */
+const PLAYLIST_ID = "PLYlo8vpxz3qI"; // "Indian truck on the road" — 16 songs
+/* ========================================================= */
+
+let player, ready = false, timer;
+
+// load YouTube IFrame API (the hidden music system)
+const tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+document.head.appendChild(tag);
+
+function onYouTubeIframeAPIReady(){
+  player = new YT.Player('yt', {
+    height:'1', width:'1',
+    playerVars:{
+      playsinline:1,
+      listType:'playlist',
+      list: PLAYLIST_ID
+    },
+    events:{
+      onReady: ()=>{ ready = true; },
+      onStateChange: e => {
+        const playing = e.data === YT.PlayerState.PLAYING;
+        document.body.classList.toggle('playing', playing);
+        document.getElementById('panel').classList.toggle('playing', playing);
+        document.getElementById('play').textContent = playing ? '⏸' : '▶';
+        updateNowPlaying();
+        // playlist auto-advances to the next song on its own
+        playing ? startTimer() : clearInterval(timer);
+      }
+    }
+  });
+}
+
+// reads the current song's info straight from the player
+function updateNowPlaying(){
+  if(!ready) return;
+  const d = player.getVideoData();
+  if(!d || !d.video_id) return;
+  document.getElementById('song').textContent = d.title || 'Loading…';
+  document.getElementById('artist').textContent = d.author || '';
+  document.getElementById('cover').style.backgroundImage =
+    `url(https://i.ytimg.com/vi/${d.video_id}/hqdefault.jpg)`; // fills the spinning CD
+}
+const next = ()=>{ if(ready) player.nextVideo(); };
+const prev = ()=>{ if(ready) player.previousVideo(); };
+
+document.getElementById('play').onclick = ()=>{
+  if(!ready) return;
+  const st = player.getPlayerState();
+  st === YT.PlayerState.PLAYING ? player.pauseVideo() : player.playVideo();
+  setTimeout(updateNowPlaying, 800); // refresh song info shortly after
+};
+document.getElementById('next').onclick = next;
+document.getElementById('prev').onclick = prev;
+
+document.getElementById('track').onclick = e=>{
+  if(!ready) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  player.seekTo(((e.clientX - r.left)/r.width) * player.getDuration(), true);
+};
+
+function fmt(t){ t=Math.floor(t||0); return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`; }
+function startTimer(){
+  clearInterval(timer);
+  timer = setInterval(()=>{
+    const c = player.getCurrentTime(), d = player.getDuration();
+    document.getElementById('cur').textContent = fmt(c);
+    document.getElementById('dur').textContent = fmt(d);
+    document.getElementById('fill').style.width = (d ? (c/d)*100 : 0) + '%';
+  }, 500);
+}
+
+// clock top-left, saloon.wtf style
+setInterval(()=>{
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}).toLowerCase();
+}, 1000);
+
+</script>
+</body>
+</html>
