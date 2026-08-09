@@ -282,21 +282,36 @@ document.getElementById('play').onclick = () => {
 document.getElementById('next').onclick = () => goTo(currentIndex + 1);
 document.getElementById('prev').onclick = () => goTo(currentIndex - 1);
 
+let seekLock = 0; // timestamp when seek lock expires
+
 document.getElementById('track').onclick = e => {
   if (!ready) return;
   const r = e.currentTarget.getBoundingClientRect();
-  player.seekTo(((e.clientX - r.left)/r.width) * player.getDuration(), true);
+  const fraction = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+  const duration = player.getDuration();
+  const seekTime = fraction * duration;
+
+  // instant visual feedback — update bar + time immediately
+  document.getElementById('fill').style.width = (fraction * 100) + '%';
+  document.getElementById('cur').textContent = fmt(seekTime);
+
+  // lock the bar for 2s so the timer doesn't snap it back while YouTube buffers
+  seekLock = Date.now() + 2000;
+
+  player.seekTo(seekTime, true);
 };
 
 function fmt(t){ t=Math.floor(t||0); return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`; }
 function startTimer(){
   clearInterval(timer);
   timer = setInterval(() => {
+    // skip update if seek lock is active (prevents bar snapping back)
+    if (Date.now() < seekLock) return;
     const c = player.getCurrentTime(), d = player.getDuration();
     document.getElementById('cur').textContent = fmt(c);
     document.getElementById('dur').textContent = fmt(d);
     document.getElementById('fill').style.width = (d ? (c/d)*100 : 0) + '%';
-  }, 500);
+  }, 250);
 }
 
 // clock top-left, saloon.wtf style
