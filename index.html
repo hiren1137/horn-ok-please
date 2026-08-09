@@ -110,7 +110,7 @@
     display:grid;place-items:center;color:var(--cream);font-family:'Yatra One',cursive;font-size:11px}
   .flap.l{left:24px}.flap.r{right:24px}
 
-  #yt{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px}
+  #yt{position:fixed;bottom:0;right:0;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1}
 
   @media (prefers-reduced-motion:reduce){
     .ind,.cover{animation:none !important}
@@ -173,7 +173,7 @@
 const PLAYLIST_ID = "PLYlo8vpxz3qI"; // "Indian truck on the road" — 16 songs
 /* ========================================================= */
 
-let player, ready = false, timer, skips = 0;
+let player, ready = false, timer, skips = 0, shuffled = false;
 
 // load YouTube IFrame API (the hidden music system)
 const tag = document.createElement('script');
@@ -186,7 +186,8 @@ function onYouTubeIframeAPIReady(){
     playerVars:{
       playsinline:1,
       listType:'playlist',
-      list: PLAYLIST_ID
+      list: PLAYLIST_ID,
+      origin: window.location.origin
     },
     events:{
       onReady: ()=>{ ready = true; },
@@ -204,6 +205,13 @@ function onYouTubeIframeAPIReady(){
       },
       onStateChange: e => {
         const playing = e.data === YT.PlayerState.PLAYING;
+        // reset skip counter whenever a song actually plays
+        if (playing) skips = 0;
+        // shuffle on first play so we don't get stuck on blocked runs
+        if (playing && !shuffled) {
+          player.setShuffle(true);
+          shuffled = true;
+        }
         document.body.classList.toggle('playing', playing);
         document.getElementById('panel').classList.toggle('playing', playing);
         document.getElementById('play').textContent = playing ? '⏸' : '▶';
