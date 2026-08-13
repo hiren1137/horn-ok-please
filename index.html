@@ -121,7 +121,24 @@
     display:grid;place-items:center;color:var(--cream);font-family:'Yatra One',cursive;font-size:11px}
   .flap.l{left:24px}.flap.r{right:24px}
 
-  #yt{position:fixed;bottom:0;right:0;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1}
+  /* YouTube Video Screen styled like a mini truck dashboard display */
+  .yt-screen{
+    width:160px;
+    height:90px;
+    margin:0 auto 12px;
+    border-radius:10px;
+    overflow:hidden;
+    border:3px solid var(--kesari);
+    box-shadow:0 0 0 2px var(--cream), 0 4px 14px rgba(0,0,0,.5);
+    background:#000;
+    position:relative;
+  }
+  #yt{
+    width:100% !important;
+    height:100% !important;
+    border:none !important;
+    display:block;
+  }
 
   @media (prefers-reduced-motion:reduce){
     .ind,.cover{animation:none !important}
@@ -150,6 +167,9 @@
 
 <div class="truck-panel" id="panel">
   <div class="ind l"></div><div class="ind r"></div>
+  <div class="yt-screen">
+    <div id="yt"></div>
+  </div>
   <div class="hop">HORN <span>OK</span> PLEASE</div>
   <div class="row">
     <div class="coverwrap"><div class="cover" id="cover"></div><div class="hole"></div></div>
@@ -171,8 +191,6 @@
   <div class="flap l">बुरी नज़र</div>
   <div class="flap r">वाले तेरा<br>मुँह काला</div>
 </div>
-
-<div id="yt"></div>
 
 <script>
 /* ================= SONG LIST =================
