@@ -78,22 +78,22 @@
   }
   .hop span{color:var(--marigold)}
   .row{display:flex;align-items:center;gap:14px}
-  .coverwrap{position:relative;width:64px;height:64px;flex-shrink:0}
-  .cover{
-    width:100%;height:100%;border-radius:50%;
-    background:#0d3b23 center/cover no-repeat;
-    border:2px solid var(--cream);
-    animation:spin 8s linear infinite;
-    animation-play-state:paused;
+  .yt-screen{
+    position:relative;
+    width:64px;
+    height:64px;
+    flex-shrink:0;
+    border-radius:10px;
+    overflow:hidden;
+    border:2px solid var(--kesari);
+    box-shadow:0 0 0 2px var(--cream), 0 3px 8px rgba(0,0,0,.4);
+    background:#000;
   }
-  .playing .cover{animation-play-state:running}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .hole{
-    position:absolute;left:50%;top:50%;
-    width:12px;height:12px;transform:translate(-50%,-50%);
-    border-radius:50%;background:rgba(0,0,0,.75);
-    border:2px solid rgba(255,243,220,.5);
-    pointer-events:none;
+  #yt{
+    width:100% !important;
+    height:100% !important;
+    border:none !important;
+    display:block;
   }
   .meta{flex:1;min-width:0}
   .song{font-weight:700;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -123,25 +123,6 @@
     display:grid;place-items:center;color:var(--cream);font-family:'Yatra One',cursive;font-size:11px}
   .flap.l{left:24px}.flap.r{right:24px}
 
-  /* YouTube Video Screen styled like a mini truck dashboard display */
-  .yt-screen{
-    width:160px;
-    height:90px;
-    margin:0 auto 12px;
-    border-radius:10px;
-    overflow:hidden;
-    border:3px solid var(--kesari);
-    box-shadow:0 0 0 2px var(--cream), 0 4px 14px rgba(0,0,0,.5);
-    background:#000;
-    position:relative;
-  }
-  #yt{
-    width:100% !important;
-    height:100% !important;
-    border:none !important;
-    display:block;
-  }
-
   @media (prefers-reduced-motion:reduce){
     .ind,.cover{animation:none !important}
   }
@@ -170,12 +151,11 @@
 
 <div class="truck-panel" id="panel">
   <div class="ind l"></div><div class="ind r"></div>
-  <div class="yt-screen">
-    <div id="yt"></div>
-  </div>
   <div class="hop">HORN <span>OK</span> PLEASE</div>
   <div class="row">
-    <div class="coverwrap"><div class="cover" id="cover"></div><div class="hole"></div></div>
+    <div class="yt-screen">
+      <div id="yt"></div>
+    </div>
     <div class="meta">
       <div class="song" id="song">Press play, driver saab</div>
       <div class="artist" id="artist">—</div>
@@ -285,8 +265,10 @@ function updateDisplay(){
   const song = SONGS[currentIndex];
   document.getElementById('song').textContent = song.title;
   document.getElementById('artist').textContent = song.artist;
-  document.getElementById('cover').style.backgroundImage =
-    `url(https://i.ytimg.com/vi/${song.id}/hqdefault.jpg)`;
+  const cover = document.getElementById('cover');
+  if (cover) {
+    cover.style.backgroundImage = `url(https://i.ytimg.com/vi/${song.id}/hqdefault.jpg)`;
+  }
 }
 
 function goTo(index){
