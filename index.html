@@ -51,6 +51,8 @@
   .links{display:flex;align-items:center;gap:18px}
   .links a{color:var(--cream);text-decoration:none;font-weight:500;font-size:15px;border-bottom:1px dashed rgba(255,243,220,.4);padding-bottom:1px}
   .links a:hover{color:var(--marigold)}
+  .links a.badge-link{border-bottom:none;padding-bottom:0;display:inline-flex;align-items:center}
+  .links a.badge-link img{height:36px;width:auto;display:block}
 
   .title{position:absolute;top:16%;left:0;right:0;text-align:center;z-index:4;padding:0 16px}
   .title h1{
@@ -129,7 +131,9 @@
   }
   @media (max-width:520px){
     .flap,.ind{display:none}
-    header{padding:14px 16px}
+    header{padding:14px 16px;flex-wrap:wrap;gap:10px}
+    .links{gap:12px;flex-wrap:wrap}
+    .links a.badge-link img{height:30px}
   }
 
   footer{
@@ -165,6 +169,7 @@
     <a href="https://open.spotify.com/playlist/YOUR_ID" target="_blank" rel="noopener">Spotify</a> -->
     <a href="https://music.youtube.com/playlist?list=PLYlo8vpxz3qI" target="_blank" rel="noopener">YT Music</a>
     <bondin-support username="hiren" label="Support me"></bondin-support>
+    <a href="https://launchstall.com" target="_blank" rel="noopener" class="badge-link"><img src="https://launchstall.com/badge.svg" alt="Featured on LaunchStall" width="220" height="54" /></a>
   </nav>
 </header>
 
